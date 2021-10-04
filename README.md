@@ -27,7 +27,9 @@ GET API should return the List of All Donations/Requests.*<br>
 
 Name - String<br>
 Icon - String<br>
-User => GET/POST API<br>
+
+## User => GET/POST API<br>
+
 Address - String<br>
 Email - String<br>
 Location - String<br>
