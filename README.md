@@ -2,6 +2,9 @@
 
 # Easy Donate API Requirements
 
+### Existing API
+To check the installation, open the Installation folder.
+
 ## Donations/Request => GET/POST API.
 
 Category - String <br>
