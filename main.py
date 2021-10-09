@@ -22,6 +22,14 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 """
+ROOT
+"""
+@app.get('/')
+def root():
+	return{'message':'Server is Running!!'}
+
+
+"""
 USERS
 
 """
@@ -69,10 +77,24 @@ def create_faq(db:models.faqtable,sets: schemas.FAQ):
 	db.refresh(db_faq)
 	return db_faq
 
-@app.get('/')
-def root():
-	return{'message':'Server is Running!!'}
+"""CATEGORIES"""
 
+def get_all_categories(db:Session):
+	return db.query(models.Categories).all()
+
+def create_category(db:Session,category_data:schemas.CATEGORIES):
+	db_categories = models.Categories(
+			category_name = category_data.category_name,
+			category_icon = category_data.category_icon
+		)
+	db.add(db_categories)
+	db.commit()
+	db.refresh(db_categories)
+	return db_categories
+
+"""
+USERS Endpoints
+"""
 @app.post('/user/create')
 def create_user(user_data : schemas.USERS, db:Session = Depends(get_db)):
 	return create_an_user(db, user_data)
@@ -98,6 +120,19 @@ def get_qs_id(qid:int,db:Session = Depends(get_db)):
 def create_question_answer(sets:schemas.FAQ,db:Session = Depends(get_db)):
 	db_faq = create_faq(db,sets)
 	return db_faq
+
+"""CATEGORIES Endpoints"""
+
+#Returning all categories
+
+@app.get('/categories/')			#This path decorator should be in first. Don't change the order
+def get_categories(db:Session = Depends(get_db)):
+	return get_all_categories(db)
+
+#Posting new category
+@app.post('/categories/')
+def post_category(category_data:schemas.CATEGORIES,db:Session = Depends(get_db)):
+	return create_category(db,category_data)
 
 if __name__ == "__main__":
 	uvicorn.run(app, DEBUG = True)
