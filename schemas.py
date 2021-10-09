@@ -17,3 +17,10 @@ class FAQ(BaseModel):
 
 	class Config:
 		orm_mode = True
+
+class CATEGORIES(BaseModel):
+    category_name : str 
+    category_icon : str 
+
+    class Config:
+        orm_mode = True

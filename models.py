@@ -19,3 +19,9 @@ class faqtable(Base):
 	faqid = Column(Integer,primary_key=True,index=True)
 	questions = Column(String)
 	answers = Column(String)
+
+class Categories(Base):
+    __tablename__ = 'categories'
+    id = Column(Integer,primary_key=True)
+    category_name = Column(String)
+    category_icon = Column(String)
