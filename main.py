@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import Depends, FastAPI
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
-
+from typing import List
 import models
 import schemas
 from database import SessionLocal, engine
@@ -133,6 +133,54 @@ def get_categories(db:Session = Depends(get_db)):
 @app.post('/categories/')
 def post_category(category_data:schemas.CATEGORIES,db:Session = Depends(get_db)):
 	return create_category(db,category_data)
+
+	
+
+"""Donations API"""
+@app.get("/donations/", response_model=List[schemas.Donationsschema])
+def get_donations(db : Session = Depends(get_db)):
+    db_donate = db.query(models.donationstable).all()
+    if db_donate:
+        return db_donate
+    else:
+        raise HTTPException(status_code=404, detail = "No donations found")   
+
+@app.get("/donations/{id}", response_model = schemas.Donationsschema)
+def get_donations_by_id(id : int, db : Session = Depends(get_db)):
+    x = db.query(models.donationstable).filter(models.donationstable.did == id).first()
+    if x:
+        return x
+    else:
+    	raise HTTPException(status_code=404, detail = "No donation found")
+
+@app.post("/donations/add/", response_model = schemas.Donationsschema)
+def create_donation(context : schemas.Donationsschema, db : Session = Depends(get_db)):
+    x = db.query(models.donationstable).filter(models.donationstable.did == context.did).first()
+    if x:
+        raise HTTPException(status_code = 400 ,detail = "Donations Already Exists!!") 
+    try:
+        db_donations = models.donationstable(
+            did = context.did,
+            Category = context.Category,
+            isDonation = context.isDonation,
+            Description = context.Description,
+            donor_address = context.donor_address,
+            donor_name = context.donor_name,
+            location = context.location,
+            postedtime = context.postedtime,
+            date = context.date,
+            time = context.time,
+            quantity = context.quantity,
+            title = context.title,
+            user = context.user,
+            image = context.image,
+        )
+        db.add(db_donations)
+        db.commit()
+        db.refresh(db_donations)
+        return db_donations  
+    except Exception as e:
+        print(e)  
 
 if __name__ == "__main__":
 	uvicorn.run(app, DEBUG = True)
