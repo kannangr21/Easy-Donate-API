@@ -8,7 +8,7 @@ from typing import List
 import models
 import schemas
 from database import SessionLocal, engine
-
+from fastapi.middleware.cors import CORSMiddleware
 
 def get_db():
 	db = SessionLocal()
@@ -20,6 +20,19 @@ def get_db():
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+origins = [
+    "https://easy-donate-api.herokuapp.com/",
+    "http://localhost:8000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 """
 ROOT
