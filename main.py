@@ -22,7 +22,7 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 origins = [
-    "https://easy-donate-api.herokuapp.com/",
+    "https://easy-donate-api.herokuapp.com/", "http://easy-donate-api.herokuapp.com/",
     "http://localhost:8000",
 ]
 
