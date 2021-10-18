@@ -108,6 +108,10 @@ USERS Endpoints
 def create_user(user_data : schemas.USERS, db:Session = Depends(get_db)):
 	return create_an_user(db, user_data)
 
+@app.get('/users')
+def get_users(db : Session = Depends(get_db)):
+	db_users = db.query(models.Users).all()
+	return db_users
 @app.get('/user/{uid}')
 def user(uid : str, db : Session = Depends(get_db)):
 	return get_user(db, uid)
