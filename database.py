@@ -5,12 +5,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-
+'''
 uri = os.environ.get("DATABASE_URL")
 if uri.startswith("postgres://"):
     SQLALCHEMY_DATABASE_URL = uri.replace("postgres://", "postgresql://", 1)
 else:
     SQLALCHEMY_DATABASE_URL = uri
+'''
+SQLALCHEMY_DATABASE_URL = "sqlite+pysqlite:///./db.sqlite3"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
