@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 import uvicorn
 from fastapi import Depends, FastAPI
 from fastapi.encoders import jsonable_encoder
@@ -47,9 +45,7 @@ USERS
 
 """
 def create_an_user(db,user_data):
-	user_id = uuid4()
-	print(user_id)
-	db_user = db.query(models.Users).filter(models.Users.UID == str(user_id)).first()
+	db_user = db.query(models.Users).filter(models.Users.UID == user_data.UID).first()
 	if db_user:
 		{"message" : "User already exists!"}
 	db_user = models.Users(
@@ -58,7 +54,7 @@ def create_an_user(db,user_data):
     	Location = user_data.Location,
 		Mobile = user_data.Mobile,
 		Name = user_data.Name,
-		UID = str(user_id)
+		UID = user_data.UID
 	)
 	db.add(db_user)
 	db.commit()

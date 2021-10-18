@@ -8,6 +8,7 @@ class USERS(BaseModel):
     Location : str
     Mobile : str
     Name : str
+    UID : str
 
     class Config:
         orm_mode = True
