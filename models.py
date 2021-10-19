@@ -28,18 +28,18 @@ class Categories(Base):
 
 class donationstable(Base):
 	__tablename__ = "Donations"
-
-	did = Column(Integer,primary_key=True,index=True)
+	id = Column(Integer,primary_key=True,index=True)
+	UID = Column(String)
+	did = Column(String)
 	Category = Column(String)
 	isDonation = Column(String)
 	Description = Column(String)
-	donor_address = Column(String,index=True)
-	donor_name = Column(String,index=True)
-	location = Column(String,index=True)
-	postedtime = Column(Time)
-	date = Column(Date)
-	time = Column(Time)
-	quantity = Column(Integer,index=True)
-	title = Column(String,index=True)
+	donor_address = Column(String)
+	donor_name = Column(String)
+	location = Column(String)
+	postedtime = Column(String)
+	expirytime = Column(String)
+	quantity = Column(String)
+	title = Column(String)
 	user = Column(String)
 	image = Column(String)

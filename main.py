@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 from typing import List
@@ -63,9 +63,12 @@ def create_an_user(db,user_data):
 
 def get_user(db, uid):
 	db_user = db.query(models.Users).filter(models.Users.UID == uid).first()
-	db_user = jsonable_encoder(db_user)
-	del db_user["UID"]
-	return db_user
+	if db_user:
+		db_user = jsonable_encoder(db_user)
+		del db_user["UID"]
+		return db_user
+	else:
+		raise HTTPException(status_code = 404, detail = "No User found")
 
 
 
@@ -158,22 +161,31 @@ def get_donations(db : Session = Depends(get_db)):
     else:
         raise HTTPException(status_code=404, detail = "No donations found")   
 
-@app.get("/donations/{id}", response_model = schemas.Donationsschema)
-def get_donations_by_id(id : int, db : Session = Depends(get_db)):
-    x = db.query(models.donationstable).filter(models.donationstable.did == id).first()
+@app.get("/donations/{did}", response_model = schemas.Donationsschema)
+def get_donations_by_id(did : str, db : Session = Depends(get_db)):
+    x = db.query(models.donationstable).filter(models.donationstable.did == did).first()
     if x:
         return x
     else:
-    	raise HTTPException(status_code=404, detail = "No donation found")
+    	raise HTTPException(status_code=404, detail = "No donations found")
+
+@app.get("/donations/history/{uid}", response_model=List[schemas.Donationsschema])
+def get_history(uid : str, db : Session = Depends(get_db)):
+	user_donations = db.query(models.donationstable).filter(models.donationstable.UID == uid).all()
+	if user_donations:
+		return user_donations
+	else:
+		return HTTPException(status_code=404, detail = "No donations found")
 
 @app.post("/donations/add/", response_model = schemas.Donationsschema)
 def create_donation(context : schemas.Donationsschema, db : Session = Depends(get_db)):
-    x = db.query(models.donationstable).filter(models.donationstable.did == context.did).first()
+    x = db.query(models.donationstable).filter(models.donationstable.did  == context.did).first()
     if x:
         raise HTTPException(status_code = 400 ,detail = "Donations Already Exists!!") 
     try:
         db_donations = models.donationstable(
-            did = context.did,
+            UID = context.UID,
+			did = context.did,
             Category = context.Category,
             isDonation = context.isDonation,
             Description = context.Description,
@@ -181,8 +193,7 @@ def create_donation(context : schemas.Donationsschema, db : Session = Depends(ge
             donor_name = context.donor_name,
             location = context.location,
             postedtime = context.postedtime,
-            date = context.date,
-            time = context.time,
+			expirytime = context.expirytime,
             quantity = context.quantity,
             title = context.title,
             user = context.user,

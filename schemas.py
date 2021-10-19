@@ -28,17 +28,17 @@ class CATEGORIES(BaseModel):
         orm_mode = True
 
 class Donationsschema(BaseModel):
-    did : int
+    UID : str
+    did : str
     Category : str
     isDonation : str
     Description : str
     donor_address : str
     donor_name : str
     location : str
-    postedtime : time
-    date : date
-    time : time
-    quantity : int
+    postedtime : str
+    expirytime : str
+    quantity : str
     title : str
     user : str
     image : str
