@@ -1,3 +1,4 @@
+from sqlalchemy.ext import declarative
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -114,7 +115,10 @@ def create_user(user_data : schemas.USERS, db:Session = Depends(get_db)):
 @app.get('/users')
 def get_users(db : Session = Depends(get_db)):
 	db_users = db.query(models.Users).all()
-	return db_users
+	if db_users:
+		return db_users
+	else:
+		raise HTTPException(status_code = 404, detail = "No users added")
 @app.get('/user/{uid}')
 def user(uid : str, db : Session = Depends(get_db)):
 	return get_user(db, uid)
